@@ -1,22 +1,10 @@
 import Link from "next/link";
-import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { FALLBACK_LEARNING_MODULES } from "@/lib/learning";
 
 export const dynamic = "force-dynamic";
 
 export default async function LearnPage() {
-  let modules: Array<{ id: string; title: string; description: string | null }> = [];
-
-  if (hasSupabaseEnv()) {
-    try {
-      const { data } = await createClient().from("learning_modules").select("*").order("order_index");
-      modules = data ?? [];
-    } catch {
-      modules = [];
-    }
-  }
-
-  const moduleItems = (modules.length > 0 ? modules : FALLBACK_LEARNING_MODULES) as Array<{
+  const moduleItems = FALLBACK_LEARNING_MODULES as Array<{
     id: string;
     title: string;
     description: string | null;
