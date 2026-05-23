@@ -15,11 +15,12 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const supabaseReady = hasSupabaseEnv();
 
   const onLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!hasSupabaseEnv) {
+    if (!supabaseReady) {
       toast.error("Connect Supabase to enable email/password login.");
       return;
     }
@@ -43,7 +44,7 @@ export function LoginForm() {
   };
 
   const onGoogle = async () => {
-    if (!hasSupabaseEnv) {
+    if (!supabaseReady) {
       toast.error("Connect Supabase and enable Google OAuth to continue with Google.");
       return;
     }
@@ -55,7 +56,7 @@ export function LoginForm() {
   };
 
   const onReset = async () => {
-    if (!hasSupabaseEnv) {
+    if (!supabaseReady) {
       toast.error("Connect Supabase to use password reset.");
       return;
     }
@@ -81,7 +82,7 @@ export function LoginForm() {
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Signing in..." : "Login"}
       </Button>
-      <Button type="button" className="w-full" variant="outline" onClick={onGoogle} disabled={!hasSupabaseEnv}>
+      <Button type="button" className="w-full" variant="outline" onClick={onGoogle} disabled={!supabaseReady}>
         Continue with Google
       </Button>
       {process.env.NODE_ENV !== "production" && (
@@ -92,10 +93,10 @@ export function LoginForm() {
           Skip login (local guest mode)
         </Link>
       )}
-      <button type="button" className="text-sm text-indigo-600" onClick={onReset} disabled={!hasSupabaseEnv}>
+      <button type="button" className="text-sm text-indigo-600" onClick={onReset} disabled={!supabaseReady}>
         Forgot password?
       </button>
-      {!hasSupabaseEnv && <p className="text-xs text-center text-amber-600">Connect Supabase to enable login and Google OAuth.</p>}
+      {!supabaseReady && <p className="text-xs text-center text-amber-600">Connect Supabase to enable login and Google OAuth.</p>}
       <p className="text-sm text-slate-600">No account? <Link className="text-indigo-600" href="/signup">Sign up</Link></p>
     </form>
   );

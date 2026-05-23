@@ -1,8 +1,9 @@
 import { createBrowserClient } from "@supabase/ssr";
+import { getSupabaseConfig, hasSupabaseConfig } from "@/lib/supabase/config";
 
-export const hasSupabaseEnv = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
+export function hasSupabaseEnv() {
+  return hasSupabaseConfig();
+}
 
 const missingSupabaseError = {
   message:
@@ -84,12 +85,14 @@ function createNoopClient() {
 }
 
 export function createClient() {
-  if (!hasSupabaseEnv) {
+  if (!hasSupabaseEnv()) {
     return createNoopClient();
   }
 
+  const { url, anonKey } = getSupabaseConfig();
+
   return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
   );
 }

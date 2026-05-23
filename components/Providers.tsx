@@ -20,9 +20,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabaseReady = hasSupabaseEnv();
 
   useEffect(() => {
-    if (!hasSupabaseEnv) {
+    if (!supabaseReady) {
       setLoading(false);
       return;
     }
@@ -68,7 +69,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       return () => subscription.unsubscribe();
     } catch {
     }
-  }, [supabase]);
+  }, [supabase, supabaseReady]);
 
   return (
     <AppContext.Provider value={{ user, profile, setProfile, loading, supabase }}>

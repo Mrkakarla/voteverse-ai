@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
   const hasGuestBypass = request.cookies.get("vv_guest_access")?.value === "1";
   const allowGuestBypass = process.env.NODE_ENV !== "production" && isLocalHost && hasGuestBypass;
 
-  if (!hasSupabaseEnv) {
+  if (!hasSupabaseEnv()) {
     if (allowGuestBypass) {
       return response;
     }

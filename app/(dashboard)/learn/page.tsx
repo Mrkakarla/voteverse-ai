@@ -1,11 +1,16 @@
 import Link from "next/link";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
+import { FALLBACK_LEARNING_MODULES } from "@/lib/learning";
 
 export default async function LearnPage() {
-  const modules = hasSupabaseEnv
-    ? (await createClient().from("learning_modules").select("*").order("order_index")).data
+  const modules = hasSupabaseEnv()
+    ? (await createClient().from("learning_modules").select("*").order("order_index")).data ?? []
     : [];
-  const moduleItems = modules as Array<{ id: string; title: string; description: string | null }>;
+  const moduleItems = (modules.length > 0 ? modules : FALLBACK_LEARNING_MODULES) as Array<{
+    id: string;
+    title: string;
+    description: string | null;
+  }>;
 
   return (
     <div className="space-y-4">

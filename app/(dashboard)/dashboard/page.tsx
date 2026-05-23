@@ -8,7 +8,7 @@ import { VoterStatusCard } from "@/components/dashboard/VoterStatusCard";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 
 export default async function DashboardPage() {
-  const supabase = hasSupabaseEnv ? createClient() : null;
+  const supabase = hasSupabaseEnv() ? createClient() : null;
   const user = supabase ? (await supabase.auth.getUser()).data.user : null;
   const profile = user ? (await supabase!.from("profiles").select("*").eq("id", user.id).single()).data : null;
   const count = supabase ? (await supabase.from("pledges").select("*", { count: "exact", head: true })).count : 0;

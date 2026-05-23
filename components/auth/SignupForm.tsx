@@ -27,6 +27,7 @@ export function SignupForm() {
   const supabase = createClient();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const supabaseReady = hasSupabaseEnv();
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     defaultValues: {
       fullName: "",
@@ -41,7 +42,7 @@ export function SignupForm() {
   });
 
   const onSubmit = async (values: FormValues) => {
-    if (!hasSupabaseEnv) {
+    if (!supabaseReady) {
       toast.error("Connect Supabase to enable sign up.");
       return;
     }
@@ -74,7 +75,7 @@ export function SignupForm() {
   };
 
   const onGoogle = async () => {
-    if (!hasSupabaseEnv) {
+    if (!supabaseReady) {
       toast.error("Connect Supabase and enable Google OAuth to continue with Google.");
       return;
     }
@@ -125,7 +126,7 @@ export function SignupForm() {
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" {...register("terms", { validate: (value) => value || "Accept terms to continue" })} /> I accept Terms</label>
       {errors.terms && <p className="text-xs text-red-600">{errors.terms.message}</p>}
       <Button className="w-full" type="submit" disabled={loading}>{loading ? "Creating..." : "Create account"}</Button>
-      <Button className="w-full" type="button" variant="outline" onClick={onGoogle} disabled={!hasSupabaseEnv}>Continue with Google</Button>
+      <Button className="w-full" type="button" variant="outline" onClick={onGoogle} disabled={!supabaseReady}>Continue with Google</Button>
       {process.env.NODE_ENV !== "production" && (
         <Link
           href="/api/dev/guest-access"
@@ -135,7 +136,7 @@ export function SignupForm() {
         </Link>
       )}
       <p className="text-sm text-slate-600">Already have an account? <Link className="text-indigo-600" href="/login">Login</Link></p>
-      {!hasSupabaseEnv && <p className="text-xs text-center text-amber-600">Connect Supabase to enable sign up and Google OAuth.</p>}
+      {!supabaseReady && <p className="text-xs text-center text-amber-600">Connect Supabase to enable sign up and Google OAuth.</p>}
     </form>
   );
 }
