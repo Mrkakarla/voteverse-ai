@@ -10,7 +10,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
 
   const logout = async () => {
-    if (!hasSupabaseEnv) {
+    if (!hasSupabaseEnv()) {
       toast.error("Supabase is not configured, so logout cannot complete.");
       return;
     }

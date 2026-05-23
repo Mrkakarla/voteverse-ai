@@ -3,6 +3,8 @@ import { PledgeWall } from "@/components/pledge/PledgeWall";
 import { hasSupabaseEnv } from "@/lib/supabase/client";
 
 export default function PledgePage() {
+  const supabaseReady = hasSupabaseEnv();
+
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div>
@@ -11,7 +13,7 @@ export default function PledgePage() {
       </div>
       <div>
         <h2 className="mb-3 text-2xl font-bold">Live Pledge Wall</h2>
-        {hasSupabaseEnv ? <PledgeWall /> : <div className="card p-4 text-sm text-slate-600">Connect Supabase to view live pledges.</div>}
+        {supabaseReady ? <PledgeWall /> : <div className="card p-4 text-sm text-slate-600">Connect Supabase to view live pledges.</div>}
       </div>
     </div>
   );
