@@ -3,18 +3,31 @@ import { createClient } from "@/lib/supabase/server";
 import { hasSupabaseEnv } from "@/lib/supabase/server";
 import { FALLBACK_LEARNING_MODULES, FALLBACK_LESSONS } from "@/lib/learning";
 
+export const dynamic = "force-dynamic";
+
 export default async function ModulePage({ params }: { params: { moduleId: string } }) {
-  const module = hasSupabaseEnv()
-    ? (await createClient().from("learning_modules").select("*").eq("id", params.moduleId).single()).data
-    : null;
-  const lessons = hasSupabaseEnv()
-    ? (await createClient().from("lessons").select("*").eq("module_id", params.moduleId).order("order_index")).data ?? []
-    : [];
+  let module: { id: string; title: string; description: string | null } | null = null;
+  let lessons: Array<{ id: string; title: string }> = [];
+
+  if (hasSupabaseEnv()) {
+    try {
+      module = (await createClient().from("learning_modules").select("*").eq("id", params.moduleId).single()).data;
+    } catch {
+      module = null;
+    }
+
+    try {
+      const { data } = await createClient().from("lessons").select("*").eq("module_id", params.moduleId).order("order_index");
+      lessons = data ?? [];
+    } catch {
+      lessons = [];
+    }
+  }
+
   const fallbackModule = FALLBACK_LEARNING_MODULES.find((item) => item.id === params.moduleId) ?? null;
   const fallbackLessons = FALLBACK_LESSONS[params.moduleId] ?? [];
-  const lessonItems = lessons as Array<{ id: string; title: string }>;
   const visibleModule = module ?? fallbackModule;
-  const visibleLessons = lessonItems.length > 0 ? lessonItems : fallbackLessons;
+  const visibleLessons = lessons.length > 0 ? lessons : fallbackLessons;
 
   return (
     <div className="space-y-4">
